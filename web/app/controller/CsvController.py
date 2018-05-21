@@ -5,8 +5,8 @@ from app.models.Abstraction import Abstraction
 import uuid
 from flask_restful import Resource, reqparse
 
-# parser = reqparse.RequestParser()
-# parser.add_argument('rate', help='Rate to charge for this resource',location='args',type=str)
+parser = reqparse.RequestParser()
+parser.add_argument('rate', help='Rate to charge for this resource',location='args',type=str)
 
 class CsvController(Resource):
 

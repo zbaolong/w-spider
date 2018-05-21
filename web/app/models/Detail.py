@@ -6,7 +6,7 @@ class Detail(db.Model):
     __tablename__ = 'detail_table'
     uuid = db.Column(db.String(36), primary_key=True)
     item_number = db.Column(db.Integer, comment='条目序号')
-    type = db.Column(db.Column(db.String(64)), comment='内容类型，例如文本、图片、混合')
+    type = db.Column(db.String(64), comment='内容类型，例如文本、图片、混合')
     paragraph_number = db.Column(db.Integer, comment='段落序号')
     paragraph_type = db.Column(db.String(64), comment='段落类型，文本、图片')
     paragraph_content = db.Column(db.Text, comment='段落内容')

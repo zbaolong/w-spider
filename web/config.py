@@ -3,6 +3,8 @@ import os
 DEBUG = True
 SECRET_KEY = os.urandom(24)
 
+UPLOADED_FILES_DEST = '/static'
+
 DATEBASE_USERNAME = 'root'
 DATEBASE_PASSWORD = '123456'
 DATABASE_HOST = 'localhost'
