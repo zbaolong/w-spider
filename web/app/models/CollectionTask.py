@@ -13,3 +13,18 @@ class CollectionTask(db.Model):
     batch_time = db.Column(db.DateTime, comment='上传时间', default=datetime.now)
     abstraction_over = db.Column(db.Boolean, default=False, comment='是否已经处理转换为5W1H')
     save_to_history_over = db.Column(db.Boolean, default=False, comment='是否已经归档')
+
+    file = db.relationship('File', backref='collection', lazy='dynamic')
+
+    def toJsonString(self):
+        return {
+            'uuid':self.uuid,
+            'keywords':self.keywords,
+            'type':self.type,
+            'source':self.source,
+            'name':self.name,
+            'batchTime':str(self.batch_time),
+            'abstractionOver':self.abstraction_over,
+            'saveToHistoryOver':self.save_to_history_over,
+            'file': [item.toJsonString() for item in self.file]
+        }
