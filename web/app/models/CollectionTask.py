@@ -1,0 +1,14 @@
+# encoding:utf-8
+# 采集管理数据库，记录每次采集任务的相关管理信息
+from app import db
+
+class CollectionTask(db.Model):
+    __tablename__ = 'collection_task_table'
+    uuid = db.Column(db.String(36),primary_key=True)
+    keywords = db.Column(db.String(256), comment='关键词列表')
+    type = db.Column(db.String(64), comment='行业',default='教育')
+    source = db.Column(db.String(128), comment='采集提供方')
+    name = db.Column(db.String(20), comment='采集人')
+    batch_time = db.Column(db.DateTime, comment='上传时间')
+    abstraction_over = db.Column(db.Boolean, default=False, comment='是否已经处理转换为5W1H')
+    save_to_history_over = db.Column(db.Boolean, default=False, comment='是否已经归档')

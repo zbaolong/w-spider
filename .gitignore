@@ -104,3 +104,6 @@ venv.bak/
 .mypy_cache/
 
 .idea
+web/test/
+web/data/
+web/migrations/
