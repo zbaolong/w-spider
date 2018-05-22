@@ -12,9 +12,29 @@ class Abstraction(db.Model):
     when = db.Column(db.DateTime, comment='发布日期')
     where = db.Column(db.String(128), comment='内容提供方')
     how = db.Column(db.String(1024), comment='来源，新闻详情链接')
+    parse_source = db.Column(db.Text, comment='用于内容解析源代码')
     picture = db.Column(db.String(1024), comment='封面图')
     category = db.Column(db.String(64), comment='分类')
     tag = db.Column(db.String(256), comment='标签')
     detail_over = db.Column(db.Boolean,default=False, comment='是否已经完成网页解析')
     save_to_history_over = db.Column(db.Boolean,default=False, comment='是否已经归档')
     whole_content_check_over = db.Column(db.Boolean,default=False, comment='是否整个内容可用')
+
+
+    def toJsonString(self):
+        return {
+            'uuid':self.uuid,
+            'itemNumber':self.item_number,
+            'why':self.what,
+            'what':self.what,
+            'who':self.who,
+            'when':self.when,
+            'where':self.where,
+            'how':self.how,
+            'picture':self.picture,
+            'category':self.category,
+            'tag':self.tag,
+            'detailOver':self.detail_over,
+            'saveToHistoryOver':self.save_to_history_over,
+            'wholeContentCheckOver':self.whole_content_check_over
+        }

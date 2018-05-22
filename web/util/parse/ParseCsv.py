@@ -1,17 +1,16 @@
 # encoding:utf-8
 import csv
-import copy
 
 class ParseCsv(object):
 
-    def __init__(self,fileName):
-        self.fileName = fileName
+    def __init__(self,path):
+        self.path = path
 
     def called(self):
-        csvFile = open('E:\\CDIO\\wSpider\\sources\\' + self.fileName)
+        csvFile = open(str(self.path))
         reader = csv.reader(csvFile)
         return reader
 
 if __name__ == '__main__':
-    p = ParseCsv('data1.csv')
+    p = ParseCsv('/static/182af1b89a371a705244da5b600ffa1d.csv')
     p.called()

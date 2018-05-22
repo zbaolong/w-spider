@@ -9,7 +9,6 @@ import uuid
 from flask_restful import Resource, reqparse
 from flask import request
 
-
 parser = reqparse.RequestParser()
 parser.add_argument('name', help='',location='form', required = True)
 parser.add_argument('source', help='',location='form', required = True)
@@ -21,7 +20,7 @@ class UploadController(Resource):
         json = parser.parse_args()
         requestFile = request.files['file']
         hash = hashlib.md5((str(time.time())).encode('utf-8')).hexdigest()
-        files.save(requestFile, name='{}.'.format(hash))
+        saveFileName = files.save(requestFile, name='{}.'.format(hash))
         collectionUUID = str(uuid.uuid4())
         collection = CollectionTask(
             uuid = collectionUUID,
@@ -34,7 +33,7 @@ class UploadController(Resource):
             uuid = str(uuid.uuid4()),
             file_name = requestFile.filename,
             file_name_hash = hash,
-            addr = '',
+            addr = '/static/{}'.format(saveFileName),
             uploader = json.get('name'),
             collection_uuid = collectionUUID
         )
