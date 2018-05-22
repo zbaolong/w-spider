@@ -1,11 +1,10 @@
 # encoding:utf-8
-from datetime import datetime
-
 from app import db
 from util.RespEntity import RespEntity
 from util.parse.ParseCsv import ParseCsv
 from app.models.Abstraction import Abstraction
 from app.models.CollectionTask import CollectionTask
+from datetime import datetime
 import uuid
 from flask_restful import Resource, reqparse
 
