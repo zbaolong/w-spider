@@ -12,7 +12,7 @@ class Abstraction(db.Model):
     when = db.Column(db.DateTime, comment='发布日期')
     where = db.Column(db.String(128), comment='内容提供方')
     how = db.Column(db.String(1024), comment='来源，新闻详情链接')
-    parse_source = db.Column(db.Text, comment='用于内容解析源代码')
+    whole = db.Column(db.Text, comment='用于内容解析源代码')
     picture = db.Column(db.String(1024), comment='封面图')
     category = db.Column(db.String(64), comment='分类')
     tag = db.Column(db.String(256), comment='标签')

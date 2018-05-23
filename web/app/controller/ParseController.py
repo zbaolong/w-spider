@@ -48,7 +48,11 @@ class ParseCsvController(Resource):
 class ParseSourceController(Resource):
 
     def post(self):
+        """
+        该接口用于客户端请求Abstraction的uuid，解析whole字段的源代码内容。并将解析出的数据存储到detail_table表中
+        :return:
+        """
         json = parser.parse_args()
         abs = Abstraction.query.filter(Abstraction.uuid == json.get('uuid')).first()
-        print abs.parse_source
-        return RespEntity.success('ok')
+        print abs.whole
+        return RespEntity.success('')

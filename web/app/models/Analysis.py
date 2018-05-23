@@ -11,3 +11,14 @@ class Analysis(db.Model):
     clicked_number = db.Column(db.Integer, comment='点击次数')
     better_number = db.Column(db.Integer, comment='点赞次数')
     class_result = db.Column(db.String(64), comment='分类结果')
+
+    def toJsonString(self):
+        return {
+            'uuid':self.uuid,
+            'itemNumber':self.item_number,
+            'itemTotalSize':self.item_total_size,
+            'visitedNumber':self.visited_number,
+            'clickedNumber':self.clicked_number,
+            'betterNumber':self.better_number,
+            'classResult':self.class_result
+        }
