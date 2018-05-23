@@ -16,7 +16,7 @@ class CollectionTask(db.Model):
 
     file = db.relationship('File', backref='collection', lazy='dynamic')
 
-    def toJsonString(self,hasFile):
+    def toJsonString(self,hasFile = False):
         baseData = {
             'uuid':self.uuid,
             'keywords':self.keywords,
