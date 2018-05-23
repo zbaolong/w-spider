@@ -2,11 +2,13 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_uploads import UploadSet,configure_uploads,patch_request_class,DATA,IMAGES
+from flask_cors import CORS
 import config
 
 app = Flask(__name__)
 app.config.from_object(config)
 db = SQLAlchemy(app)
+CORS(app)
 
 files = UploadSet('files',DATA)
 configure_uploads(app, files)

@@ -13,6 +13,7 @@ parser = reqparse.RequestParser()
 parser.add_argument('name', help='',location='form', required = True)
 parser.add_argument('source', help='',location='form', required = True)
 parser.add_argument('type', help='',location='form', required = True)
+parser.add_argument('keywords', help='',location='form', required = True)
 
 class UploadController(Resource):
 
@@ -24,7 +25,7 @@ class UploadController(Resource):
         collectionUUID = str(uuid.uuid4())
         collection = CollectionTask(
             uuid = collectionUUID,
-            keywords = '',
+            keywords = json.get('keywords'),
             type = json.get('type'),
             source = json.get('source'),
             name = json.get('name')
@@ -40,4 +41,4 @@ class UploadController(Resource):
         db.session.add(collection)
         db.session.add(file)
         db.session.commit()
-        return RespEntity.success(collection.toJsonString())
+        return RespEntity.success(collection.toJsonString(True))

@@ -1,15 +1,24 @@
 # encoding:utf-8
 from spider.util.DataFormateUtil import DataFormateUtil
 import json
+import logging
 import HTMLParser
+from multiprocessing import Process
 from lxml import etree
 import requests
 import PyV8
 from pymongo import MongoClient
 
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
 class JrttSpider(object):
 
-    def __init__(self,urlList):
+    def __init__(self,urlList,isFirst):
+        self.isFirst = isFirst
         self.urlList = urlList
         self.conn = MongoClient('localhost', 27017)
         self.db = self.conn.wspider
@@ -62,9 +71,11 @@ class JrttSpider(object):
         imgUrlList = element.xpath('//img/@src')
         return html,imgUrlList,len(imgUrlList)
 
-    def run(self):
-        for url in self.urlList:
-            parseElemet = self.request(url)
+    def run(self,url):
+        parseElemet = self.request(url)
+        if parseElemet.xpath('//*[@content="ixigua_pc_detail"]'):  # 如果匹配到视频的页面则不进行爬取
+            return
+        else:
             keywords, description = self.parseElement(parseElemet)
             scriptBlock = list(parseElemet.xpath('//script/text()'))[4][16:]
             scriptBlockJson = self.toJsonString(scriptBlock)
@@ -79,9 +90,9 @@ class JrttSpider(object):
             feedInfoInitList = scriptBlockDict.get('feedInfo').get('initList')
 
             # 格式化
-            feedLinkInfo = [item.get('source_url') for item in feedInfoInitList]
-            publishTime = DataFormateUtil.stringToDateTime(time)
-            tags = [item.get('name') for item in tags]
+            feedLinkList = [item.get('source_url') for item in feedInfoInitList] # 提取推荐列表的文章URL为列表
+            publishTime = DataFormateUtil.stringToDateTime(time) # 格式化为时间日期格式
+            tags = [item.get('name') for item in tags] # 提取tag标签内容为列表
             html, imgUrlList,imgCount =  self.parseContent(content)  # 解析出图片的链接和图片的数量
 
             column = {
@@ -95,7 +106,7 @@ class JrttSpider(object):
                 'category': category,
                 'tags': tags,
                 'keywords': str(keywords.encode('utf-8')).split(','),
-                'feedLinkInfo': feedLinkInfo,
+                'feedLinkList': feedLinkList,
                 'source':'来源名',
                 'sourceIndex': '来源序号',
                 'sourceUrl':'URL来源',
@@ -104,18 +115,30 @@ class JrttSpider(object):
                 'isVerified': 0
             }
             self.collections.insert(column)
-            # break
+            logging.info('finished 【{}】 —— {}'.format(title.encode('utf-8'),url))
 
+            if self.isFirst == True:
+                p = Process(target=startNewThread, args=(feedLinkList,))
+                p.start()
 
     def called(self):
-        self.run()
+        for url in self.urlList:
+            try:
+                self.run(url)
+            except Exception:
+                continue
+
+def startNewThread(urlList):
+    spider = JrttSpider(urlList,isFirst=False)
+    spider.called()
 
 if __name__ == '__main__':
-    spider = JrttSpider(
-        [
-         # 'https://www.toutiao.com/a6557871064444043779/',
-         # 'https://www.toutiao.com/a6557884307371721229/',
-         'https://www.toutiao.com/a6555987011059057166/',
-         'https://www.toutiao.com/i6500077774579958286']
-    )
+    urlList = [
+        'https://www.toutiao.com/a6557871064444043779/',
+        'https://www.toutiao.com/a6557884307371721229/',
+        'https://www.toutiao.com/item/6510055424719323655/',
+        'https://www.toutiao.com/item/6509330340098605575/',
+        'https://www.toutiao.com/item/6507810141432185352/'
+    ]
+    spider = JrttSpider(urlList,isFirst=True)
     spider.called()
