@@ -9,8 +9,8 @@ from flask_restful import Api
 
 api = Api(app)
 
-api.add_resource(ParseCsvController,'/parse/csv')
-api.add_resource(ParseSourceController,'/parse/source')
-api.add_resource(ParseExcelControler,'/parse/excel')
-api.add_resource(UploadController,'/uploads')
-api.add_resource(CollectionController,'/collections')
+api.add_resource(ParseCsvController,'/api/parse/csv')
+api.add_resource(ParseSourceController,'/api/parse/source')
+api.add_resource(ParseExcelControler,'/api/parse/excel')
+api.add_resource(UploadController,'/api/uploads')
+api.add_resource(CollectionController,'/api/collections')
