@@ -13,6 +13,7 @@ class Abstraction(db.Model):
     where = db.Column(db.String(128), comment='内容提供方')
     how = db.Column(db.String(1024), comment='来源，新闻详情链接')
     whole = db.Column(db.Text, comment='用于内容解析源代码')
+
     content = db.Column(db.Text, comment='内容文字')
     picture = db.Column(db.String(1024), comment='封面图')
     category = db.Column(db.String(64), comment='分类')
@@ -31,7 +32,7 @@ class Abstraction(db.Model):
             'why':self.what,
             'what':self.what,
             'who':self.who,
-            'when':self.when,
+            'when':str(self.when),
             'where':self.where,
             'how':self.how,
             'picture':self.picture,
@@ -41,3 +42,9 @@ class Abstraction(db.Model):
             'saveToHistoryOver':self.save_to_history_over,
             'wholeContentCheckOver':self.whole_content_check_over
         }
+    def toJsonAll(self):
+        data = self.toJsonString()
+        data['content'] = self.content
+        data['class_by_user'] = self.class_by_user
+
+        return data
