@@ -21,7 +21,7 @@ class ReadExcel(object):
 
     @staticmethod
     def called():
-        excel = xlrd.open_workbook('data.xlsx')
+        excel = xlrd.open_workbook('data2.xls')
         sh = excel.sheet_by_index(0)
         rowCount = sh.nrows
         logging.info("Read excel successful, a total of {} rows".format(rowCount))
@@ -32,7 +32,8 @@ class ReadExcel(object):
                 'url': '',
                 'source': '',
                 'category': '',
-                'facedgroup': ''
+                'facedgroup': '',
+                'uploader':''
             }
             Data1 = sh.cell(i, 0).value
             data['index'] = int(Data1)
@@ -44,9 +45,9 @@ class ReadExcel(object):
             data['category'] = Data4
             Data5 = sh.cell(i, 4).value
             data['facedgroup'] = Data5
+            Data5 = sh.cell(i, 5).value
+            data['uploader'] = Data5
             list.append(data)
-
-            break
         return list
 
 class JrttSpider(object):
@@ -156,6 +157,7 @@ class JrttSpider(object):
                 'sourceUrl':url,
                 'sourceCategory':sourceData.get('category'),
                 'sourceFacedgroup':sourceData.get('facedgroup'),
+                'sourceUploader':sourceData.get('uploader'),
                 'isVerified': 0,
                 'isRecommended': 0 if self.isFirst == True else 1,  # 是否为原始还是推荐的
                 'recSource': self.recSource, # 推荐的来源
@@ -173,7 +175,8 @@ class JrttSpider(object):
                         'url': item,
                         'source': sourceData.get('source'),
                         'category': sourceData.get('category'),
-                        'facedgroup': sourceData.get('facedgroup')
+                        'facedgroup': sourceData.get('facedgroup'),
+                        'uploader':sourceData.get('uploader')
                     }
                     feedInfoList.append(dict)
                 p = Process(target=startNewThread, args=(feedInfoList,url))

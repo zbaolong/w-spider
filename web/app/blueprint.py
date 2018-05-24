@@ -5,6 +5,7 @@ from app.controller.ParseController import ParseSourceController
 from app.controller.ParseExcelControler import ParseExcelControler
 from app.controller.UploadController import UploadController
 from app.controller.CollectionController import CollectionController
+from app.controller.ResultController import ResultController
 from flask_restful import Api
 
 api = Api(app)
@@ -14,3 +15,4 @@ api.add_resource(ParseSourceController,'/api/parse/source')
 api.add_resource(ParseExcelControler,'/api/parse/excel')
 api.add_resource(UploadController,'/api/uploads')
 api.add_resource(CollectionController,'/api/collections')
+api.add_resource(ResultController,'/api/result')

@@ -5,7 +5,8 @@ class DataFormateUtil():
 
     @staticmethod
     def stringToDateTime(value):
-        if value:
-            return datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
-        else:
-            return datetime.now()
+        try:
+            time = datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
+        except Exception:
+            time = datetime.now()
+        return time

@@ -18,24 +18,24 @@ parser.add_argument('keywords', help='',location='form', required = True)
 class UploadController(Resource):
 
     def post(self):
-        json = parser.parse_args()
+        form = parser.parse_args()
         requestFile = request.files['file']
         hash = hashlib.md5((str(time.time())).encode('utf-8')).hexdigest()
         saveFileName = files.save(requestFile, name='{}.'.format(hash))
         collectionUUID = str(uuid.uuid4())
         collection = CollectionTask(
             uuid = collectionUUID,
-            keywords = json.get('keywords'),
-            type = json.get('type'),
-            source = json.get('source'),
-            name = json.get('name')
+            keywords = form.get('keywords'),
+            type = form.get('type'),
+            source = form.get('source'),
+            name = form.get('name')
         )
         file = File(
             uuid = str(uuid.uuid4()),
             file_name = requestFile.filename,
             file_name_hash = hash,
             addr = '/static/{}'.format(saveFileName),
-            uploader = json.get('name'),
+            uploader = form.get('name'),
             collection_uuid = collectionUUID
         )
         db.session.add(collection)
