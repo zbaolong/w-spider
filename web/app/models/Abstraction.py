@@ -13,6 +13,7 @@ class Abstraction(db.Model):
     where = db.Column(db.String(128), comment='内容提供方')
     how = db.Column(db.String(1024), comment='来源，新闻详情链接')
     whole = db.Column(db.Text, comment='用于内容解析源代码')
+
     content = db.Column(db.Text, comment='内容文字')
     picture = db.Column(db.String(1024), comment='封面图')
     category = db.Column(db.String(64), comment='分类')
@@ -24,20 +25,25 @@ class Abstraction(db.Model):
     whole_content_check_over = db.Column(db.Boolean,default=False, comment='是否整个内容可用')
 
 
-    def toJsonString(self):
-        return {
+    def toJsonString(self,hasAll = False):
+        baseData = {
             'uuid':self.uuid,
             'itemNumber':self.item_number,
             'why':self.what,
             'what':self.what,
             'who':self.who,
-            'when':self.when,
+            'when':str(self.when),
             'where':self.where,
             'how':self.how,
             'picture':self.picture,
             'category':self.category,
             'tag':self.tag,
             'detailOver':self.detail_over,
+            'class_by_user':self.class_by_user,
             'saveToHistoryOver':self.save_to_history_over,
             'wholeContentCheckOver':self.whole_content_check_over
         }
+        if hasAll:
+            baseData['content'] = self.content
+            baseData['whole'] = self.whole
+        return baseData

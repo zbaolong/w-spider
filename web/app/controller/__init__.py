@@ -2,4 +2,4 @@
 
 from ParseController import ParseCsvController
 from ParseController import ParseSourceController
-from UploadController import UploadController
+from app.controller.upload.UploadController import UploadController
