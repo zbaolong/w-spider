@@ -106,6 +106,7 @@ class JrttSpider(object):
         :param content: 源代码
         :return: html：转义后的HTML;imgUrlList：图片链接列表;len(imgUrlList)：图片数量
         """
+        html = HTMLParser.HTMLParser().unescape(content)
         element = etree.HTML(html)
         imgUrlList = element.xpath('//img/@src')
         return imgUrlList,len(imgUrlList)
@@ -157,7 +158,9 @@ class JrttSpider(object):
                 'sourceFacedgroup':sourceData.get('facedgroup'),
                 'isVerified': 0,
                 'isRecommended': 0 if self.isFirst == True else 1,  # 是否为原始还是推荐的
-                'recSource': self.recSource # 推荐的来源
+                'recSource': self.recSource, # 推荐的来源
+                'readers': [],
+                'readNum': long(0)
             }
             self.collections.insert(column)
             logging.info('finished 【{}】 —— {}'.format(title.encode('utf-8'),url))

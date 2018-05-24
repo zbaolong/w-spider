@@ -4,8 +4,8 @@ from app import db
 
 class Abstraction(db.Model):
     __tablename__ = 'abstraction_table'
-    uuid = db.Column(db.String(36),primary_key=True)
-    item_number = db.Column(db.Integer, comment='条目序号')
+    uuid = db.Column(db.String(36), primary_key=True)
+    item_number = db.Column(db.Integer, comment='条目序号', primary_key=True)
     why = db.Column(db.String(256), comment='标题')
     what = db.Column(db.String(1024), comment='摘要')
     who = db.Column(db.String(256), comment='作者')
@@ -13,9 +13,12 @@ class Abstraction(db.Model):
     where = db.Column(db.String(128), comment='内容提供方')
     how = db.Column(db.String(1024), comment='来源，新闻详情链接')
     whole = db.Column(db.Text, comment='用于内容解析源代码')
+    content = db.Column(db.Text, comment='内容文字')
     picture = db.Column(db.String(1024), comment='封面图')
     category = db.Column(db.String(64), comment='分类')
     tag = db.Column(db.String(256), comment='标签')
+    class_by_user = db.Column(db.String(256), comment='用户标注的面向人群类型')
+
     detail_over = db.Column(db.Boolean,default=False, comment='是否已经完成网页解析')
     save_to_history_over = db.Column(db.Boolean,default=False, comment='是否已经归档')
     whole_content_check_over = db.Column(db.Boolean,default=False, comment='是否整个内容可用')

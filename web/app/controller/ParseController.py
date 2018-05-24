@@ -2,10 +2,9 @@
 from app import db
 from util.RespEntity import RespEntity
 from util.parse.ParseCsv import ParseCsv
-from spider.util.DataFormateUtil import DataFormateUtil
+from util.DataFormateUtil import DataFormateUtil
 from app.models.Abstraction import Abstraction
 from app.models.CollectionTask import CollectionTask
-import uuid
 from flask_restful import Resource, reqparse
 
 parser = reqparse.RequestParser()
@@ -25,12 +24,12 @@ class ParseCsvController(Resource):
                 when = DataFormateUtil.stringToDateTime(item[3])
                 if item[0] != '':  # 判断标题是否为空
                     abs = Abstraction(
-                        uuid=str(uuid.uuid4()),
-                        why=item[0],
+                        uuid = collection.uuid,
+                        why = item[0],
                         what = item[1],
                         who = item[2],
                         when = when,
-                        parse_source = item[4],
+                        whole = item[4],
                         tag = item[5],
                         category = item[6],
                         how = item[7],
