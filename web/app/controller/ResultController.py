@@ -8,5 +8,5 @@ class ResultController(Resource):
 
     def get(self):
         args = pagingParser.parse_args()
-        analysis = [item.toJsonString() for item in Analysis.query.all()]
+        analysis = [item.toJsonString(hasParagraph=True) for item in Analysis.query.all()]
         return RespEntity.success(analysis)

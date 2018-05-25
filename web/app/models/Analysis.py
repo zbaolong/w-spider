@@ -8,17 +8,17 @@ class Analysis(db.Model):
     __tablename__ = 'analysis_table'
     uuid = db.Column(db.String(36),primary_key=True)
     item_number = db.Column(db.Integer, comment='条目序号', primary_key=True)
-    item_total_size = db.Column(db.Integer, comment='内容文本总长度')
-    visited_number = db.Column(db.Integer, comment='访问次数')
-    clicked_number = db.Column(db.Integer, comment='点击次数')
-    better_number = db.Column(db.Integer, comment='点赞次数')
+    item_total_size = db.Column(db.Integer, comment='内容文本总长度', default=0)
+    visited_number = db.Column(db.Integer, comment='访问次数', default=0)
+    clicked_number = db.Column(db.Integer, comment='点击次数', default=0)
+    better_number = db.Column(db.Integer, comment='点赞次数', default=0)
     class_result = db.Column(db.String(64), comment='分类结果')
 
     def toJsonString(self,hasParagraph=False):
         baseData = {
             'uuid':self.uuid,
             'itemNumber':self.item_number,
-            'itemTotalSize':self.item_total_size,
+            'itemTotalSize':len(self.getParagraphData()),
             'visitedNumber':self.visited_number,
             'clickedNumber':self.clicked_number,
             'betterNumber':self.better_number,
@@ -30,4 +30,4 @@ class Analysis(db.Model):
 
     def getParagraphData(self):
         details = Detail.query.filter(Detail.uuid == self.uuid).all()
-        return details[0].toJsonString()
+        return [item.toJsonString() for item in details]

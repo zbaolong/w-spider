@@ -20,7 +20,7 @@ class Detail(db.Model):
             'type':self.type,
             'paragraphNumber':self.paragraph_number,
             'paragraphType':self.paragraph_type,
-            'paragraphContent':self.content_check_over,
+            'paragraphContent':self.paragraph_content,
             'saveToHistoryOver':self.save_to_history_over,
             'contentCheckOver':self.content_check_over
         }

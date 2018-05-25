@@ -1,20 +1,22 @@
 # encoding:utf-8
 from app import db
-from util.RespEntity import RespEntity
 from util.parse.ParseCsv import ParseCsv
 from util.ErrorTemplate import *
 from app.models.Abstraction import Abstraction
 from app.models.CollectionTask import CollectionTask
 from app.models.Detail import Detail
+from datetime import datetime
 import re
 from bs4 import BeautifulSoup
-from datetime import datetime
 from flask_restful import Resource, reqparse
 from sqlalchemy import and_
 
 parser = reqparse.RequestParser()
 parser.add_argument('uuid', help='Primary key cannot be empty',location='json',type=str,required = True)
-parser.add_argument('itemNumber', help='Itemnumber cannot be empty',location='json',type=int,required = True)
+
+parser2 = reqparse.RequestParser()
+parser2.add_argument('uuid', help='Primary key cannot be empty',location='json',type=str,required = True)
+parser2.add_argument('itemNumber', help='Itemnumber cannot be empty',location='json',type=int,required = True)
 
 class ParseCsvController(Resource):
 
@@ -71,7 +73,7 @@ class ParseSourceController(Resource):
         该接口用于客户端请求Abstraction的uuid，解析whole字段的源代码内容。并将解析出的数据存储到detail_table表中
         :return:
         """
-        json = parser.parse_args()
+        json = parser2.parse_args()
         abs = Abstraction.query.filter(
             and_(Abstraction.uuid == json.get('uuid'),
                  Abstraction.item_number == json.get('itemNumber')
