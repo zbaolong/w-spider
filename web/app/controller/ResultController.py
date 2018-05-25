@@ -1,7 +1,7 @@
 # encoding:utf-8
 from flask_restful import Resource,reqparse
 from app.models.Analysis import Analysis
-from app.ParamsParser import pagingParser
+from app.parser import pagingParser
 from util.RespEntity import RespEntity
 
 class ResultController(Resource):

@@ -39,7 +39,7 @@ class Abstraction(db.Model):
             'category':self.category,
             'tag':self.tag,
             'detailOver':self.detail_over,
-            'class_by_user':self.class_by_user,
+            'classByUser':self.class_by_user,
             'saveToHistoryOver':self.save_to_history_over,
             'wholeContentCheckOver':self.whole_content_check_over
         }

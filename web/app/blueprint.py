@@ -6,7 +6,7 @@ from app.controller.upload.UploadController import UploadController
 from app.controller.CollectionController import CollectionController
 from app.controller.ResultController import ResultController
 from app.controller.AbstractionController import AbstractionController
-from app.controller.ClassDetailController import ClassDetailController
+from app.controller.AbstractionController import AbsDetailController
 from app.controller.ParseController import ParseCsvController
 
 from flask_restful import Api
@@ -20,4 +20,4 @@ api.add_resource(UploadController,'/api/uploads')
 api.add_resource(CollectionController,'/api/collections')
 api.add_resource(ResultController,'/api/result')
 api.add_resource(AbstractionController, '/api/abstractions')
-api.add_resource(ClassDetailController, '/api/abstractions/<string:uuid>/<int:number>')
+api.add_resource(AbsDetailController, '/api/abstractions/<string:uuid>/<int:number>')

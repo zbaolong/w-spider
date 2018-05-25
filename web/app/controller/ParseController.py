@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 
 parser = reqparse.RequestParser()
-parser.add_argument('uuid', help='UUID cannot be empty',location='json',type=str,required = True)
+parser.add_argument('uuid', help='Primary key cannot be empty',location='json',type=str,required = True)
 
 class ParseCsvController(Resource):
 
