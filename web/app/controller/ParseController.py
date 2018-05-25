@@ -6,6 +6,9 @@ from util.DataFormateUtil import DataFormateUtil
 from app.models.Abstraction import Abstraction
 from app.models.CollectionTask import CollectionTask
 from flask_restful import Resource, reqparse
+from app.models.Detail import Detail
+import re
+from flask import jsonify
 
 parser = reqparse.RequestParser()
 parser.add_argument('uuid', help='UUID cannot be empty',location='json',type=str,required = True)
@@ -53,5 +56,35 @@ class ParseSourceController(Resource):
         """
         json = parser.parse_args()
         abs = Abstraction.query.filter(Abstraction.uuid == json.get('uuid')).first()
-        print abs.whole
-        return RespEntity.success('')
+        print (abs.uuid)
+        body = re.findall('<p>(.*?)</p>',abs.whole) #匹配所有p标签
+        index = 0
+        for each in body:  # 遍历p标签，找到所有的图片url
+            img_url = ''
+            # image_url_list = re.findall('<img src=""(.*?)""|<a href=""(.*?)"">', each)
+            image_url_list = re.findall('<img src=\"(.*?)"', each)
+            if len(image_url_list) != 0:
+                img_url = image_url_list[0]
+
+            text = re.sub('<strong>|</strong>', '', each)
+            txt = re.sub('<img(.*?)>|<a href=""(.*?)"">', img_url, text)  # 将图片url替换为正确格式
+            end = re.sub('    <style>(.*?)</style>    ', '', txt)  # 移除<style>···</style>
+            if end.find('http')+1:
+                paragraph_type = u'图片'
+            else:
+                paragraph_type = u'文字'
+            print(paragraph_type)
+            detail = Detail(
+                uuid=abs.uuid,
+                item_number=index+1,
+                type='',
+                paragraph_number=index+1,
+                paragraph_type=paragraph_type,
+                paragraph_content=end,
+            )
+            index += 1
+
+            db.session.add(detail)
+            db.session.commit()
+
+        return jsonify(data=detail)
