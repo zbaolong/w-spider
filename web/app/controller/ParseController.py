@@ -78,7 +78,10 @@ class ParseSourceController(Resource):
         )).first()
         if not abs:
             return InstanceNotFoundError()
-        body = re.findall('<p>(.*?)</p>',abs.whole) #匹配所有p标签
+        body = re.findall('<p>(.*?)</p>',abs.whole) # 匹配所有p标签
+        article_type = u'文字'
+        if 'http' in abs.whole:  # 判断文章类型
+            article_type = u'混合'
         index = 0
         for each in body:  # 遍历p标签，找到所有的图片url
             img_url = ''
@@ -93,11 +96,11 @@ class ParseSourceController(Resource):
                 paragraph_type = u'图片'
             else:
                 paragraph_type = u'文字'
-            print(paragraph_type)
+            print(article_type)
             detail = Detail(
                 uuid=abs.uuid,
                 item_number=index+1,
-                type='混合',
+                type=article_type,
                 paragraph_number=index+1,
                 paragraph_type=paragraph_type,
                 paragraph_content=end,
