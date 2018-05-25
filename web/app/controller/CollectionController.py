@@ -1,16 +1,17 @@
 # encoding:utf-8
 from app.models.CollectionTask import CollectionTask
 from util.RespEntity import RespEntity
-from flask_restful import Resource,reqparse
-
-parser = reqparse.RequestParser()
-parser.add_argument('offset', help='',location='args', required = True, type = int)
-parser.add_argument('count', help='',location='args', required = True, type = int)
+from app.parser import pagingParser
+from flask_restful import Resource
 
 class CollectionController(Resource):
 
     def get(self):
-        args = parser.parse_args()
+        """
+        查询所有的采集表中的记录，用于采集的管理和解析
+        :return:
+        """
+        args = pagingParser.parse_args()
         result = CollectionTask.query.paginate(
             args.get('offset'), per_page=args.get('count'),
             error_out=False

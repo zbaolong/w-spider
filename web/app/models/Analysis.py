@@ -1,6 +1,8 @@
 # encoding:utf-8
 # 分类数据库，记录每一个条目的分类统计情况
 from app import db
+from app.models.Detail import Detail
+from sqlalchemy import and_
 
 class Analysis(db.Model):
     __tablename__ = 'analysis_table'
@@ -12,13 +14,20 @@ class Analysis(db.Model):
     better_number = db.Column(db.Integer, comment='点赞次数')
     class_result = db.Column(db.String(64), comment='分类结果')
 
-    def toJsonString(self):
-        return {
+    def toJsonString(self,hasParagraph=False):
+        baseData = {
             'uuid':self.uuid,
             'itemNumber':self.item_number,
             'itemTotalSize':self.item_total_size,
             'visitedNumber':self.visited_number,
             'clickedNumber':self.clicked_number,
             'betterNumber':self.better_number,
-            'classResult':self.class_result
+            'classResult':self.class_result,
         }
+        if hasParagraph:
+            baseData['paragraph'] = self.getParagraphData()
+        return baseData
+
+    def getParagraphData(self):
+        details = Detail.query.filter(Detail.uuid == self.uuid).all()
+        return details[0].toJsonString()

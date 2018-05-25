@@ -2,16 +2,19 @@
 from app import db
 from util.RespEntity import RespEntity
 from util.parse.ParseCsv import ParseCsv
-from util.DataFormateUtil import DataFormateUtil
+from util.ErrorTemplate import *
 from app.models.Abstraction import Abstraction
 from app.models.CollectionTask import CollectionTask
-from flask_restful import Resource, reqparse
 from app.models.Detail import Detail
 import re
-from flask import jsonify
+from bs4 import BeautifulSoup
+from datetime import datetime
+from flask_restful import Resource, reqparse
+from sqlalchemy import and_
 
 parser = reqparse.RequestParser()
-parser.add_argument('uuid', help='UUID cannot be empty',location='json',type=str,required = True)
+parser.add_argument('uuid', help='Primary key cannot be empty',location='json',type=str,required = True)
+parser.add_argument('itemNumber', help='Itemnumber cannot be empty',location='json',type=int,required = True)
 
 class ParseCsvController(Resource):
 
@@ -24,18 +27,31 @@ class ParseCsvController(Resource):
             if index == 0:
                 pass
             else:
-                when = DataFormateUtil.stringToDateTime(item[3])
+                # when = DataFormateUtil.stringToDateTime(item[3])
+                when = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 if item[0] != '':  # 判断标题是否为空
+
+                    if item[4] is not None:
+                        what = item[4]
+                    else:
+                        # 得到摘要
+                        soup = BeautifulSoup(item[5], 'lxml')
+                        p_list = soup.find_all('p')
+                        if p_list[0].img:
+                            what = p_list[0].img.get('alt')
+                        else:
+                            what = p_list[0].text
                     abs = Abstraction(
                         uuid = collection.uuid,
-                        why = item[0],
-                        what = item[1],
+                        why = item[1],
+                        what = what,
                         who = item[2],
                         when = when,
-                        whole = item[4],
-                        tag = item[5],
-                        category = item[6],
-                        how = item[7],
+                        whole = item[5],
+                        tag = item[7],
+                        content = item[6],
+                        category = item[8],
+                        how = item[0],
                         item_number = index
                     )
                     db.session.add(abs)
@@ -47,6 +63,7 @@ class ParseCsvController(Resource):
         db.session.commit()
         return RespEntity().success(collection.toJsonString())
 
+
 class ParseSourceController(Resource):
 
     def post(self):
@@ -55,8 +72,12 @@ class ParseSourceController(Resource):
         :return:
         """
         json = parser.parse_args()
-        abs = Abstraction.query.filter(Abstraction.uuid == json.get('uuid')).first()
-        print (abs.uuid)
+        abs = Abstraction.query.filter(
+            and_(Abstraction.uuid == json.get('uuid'),
+                 Abstraction.item_number == json.get('itemNumber')
+        )).first()
+        if not abs:
+            return InstanceNotFoundError()
         body = re.findall('<p>(.*?)</p>',abs.whole) #匹配所有p标签
         index = 0
         for each in body:  # 遍历p标签，找到所有的图片url
@@ -65,7 +86,6 @@ class ParseSourceController(Resource):
             image_url_list = re.findall('<img src=\"(.*?)"', each)
             if len(image_url_list) != 0:
                 img_url = image_url_list[0]
-
             text = re.sub('<strong>|</strong>', '', each)
             txt = re.sub('<img(.*?)>|<a href=""(.*?)"">', img_url, text)  # 将图片url替换为正确格式
             end = re.sub('    <style>(.*?)</style>    ', '', txt)  # 移除<style>···</style>
@@ -77,14 +97,12 @@ class ParseSourceController(Resource):
             detail = Detail(
                 uuid=abs.uuid,
                 item_number=index+1,
-                type='',
+                type='混合',
                 paragraph_number=index+1,
                 paragraph_type=paragraph_type,
                 paragraph_content=end,
             )
             index += 1
-
             db.session.add(detail)
             db.session.commit()
-
-        return jsonify(data=detail)
+        return RespEntity.success('success')
