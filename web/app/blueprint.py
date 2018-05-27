@@ -9,6 +9,7 @@ from app.controller.ResultController import ResultDetailController
 from app.controller.AbstractionController import AbstractionController
 from app.controller.AbstractionController import AbsDetailController
 from app.controller.ParseController import ParseCsvController
+from app.controller.DetailController import DetailController
 
 from flask_restful import Api
 
@@ -23,3 +24,5 @@ api.add_resource(ResultController,'/api/result')
 api.add_resource(ResultDetailController,'/api/result/<string:uuid>')
 api.add_resource(AbstractionController, '/api/abstractions')
 api.add_resource(AbsDetailController, '/api/abstractions/<string:uuid>/<int:number>')
+
+api.add_resource(DetailController, '/api/detail/<string:uuid>/<int:itemNumber>/<int:pnNumber>')
