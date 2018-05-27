@@ -5,6 +5,7 @@ from sqlalchemy import and_
 from flask_restful import Resource, reqparse
 from app import db
 from flask import request
+from util.RespEntity import RespEntity
 
 
 class DetailController(Resource):
@@ -22,7 +23,7 @@ class DetailController(Resource):
                                           Detail.paragraph_number == pnNumber)).first()
         detail.paragraph_content = request.json.get('paragraph_content')
         db.session.commit()
-        return 'put success'
+        return RespEntity.success(detail.toJsonString())
 
 
     def delete(self,uuid,itemNumber,pnNumber):
@@ -38,4 +39,4 @@ class DetailController(Resource):
                                           Detail.paragraph_number == pnNumber)).first()
         db.session.delete(detail)
         db.session.commit()
-        return 'detele success'
+        return RespEntity.success()
