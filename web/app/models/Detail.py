@@ -10,6 +10,8 @@ class Detail(db.Model):
     paragraph_number = db.Column(db.Integer, comment='段落序号', primary_key=True)
     paragraph_type = db.Column(db.String(64), comment='段落类型，文本、图片')
     paragraph_content = db.Column(db.Text, comment='段落内容')
+
+    is_deprecated = db.Column(db.Boolean,default=False, comment='是否不可用')
     save_to_history_over = db.Column(db.Boolean,default=False, comment='是否已经归档')
     content_check_over = db.Column(db.Boolean,default=False, comment='素材是否可用')
 
