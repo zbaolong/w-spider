@@ -19,7 +19,9 @@ class DetailController(Resource):
         )).first()
         detail.paragraph_content = request.json.get('paragraphContent')
         db.session.commit()
-        return RespEntity.success(detail.toJsonString())
+        return RespEntity.success(
+            detail.toJsonString()
+        )
 
 
     def delete(self,uuid,itemNumber,pnNumber):
