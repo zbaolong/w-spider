@@ -5,6 +5,7 @@ from util.ErrorTemplate import *
 from app.models.Abstraction import Abstraction
 from app.models.CollectionTask import CollectionTask
 from app.models.Detail import Detail
+from app.models.Analysis import Analysis
 from datetime import datetime
 import re
 from bs4 import BeautifulSoup
@@ -98,10 +99,9 @@ class ParseSourceController(Resource):
                 paragraph_type = u'图片'
             else:
                 paragraph_type = u'文字'
-            print(article_type)
             detail = Detail(
                 uuid=abs.uuid,
-                item_number=index+1,
+                item_number=abs.item_number,
                 type=article_type,
                 paragraph_number=index+1,
                 paragraph_type=paragraph_type,
@@ -109,5 +109,11 @@ class ParseSourceController(Resource):
             )
             index += 1
             db.session.add(detail)
-            db.session.commit()
+        db.session.delete(abs)
+
+        analysis = Analysis(
+            uuid = abs.uuid
+        )
+        db.session.add(analysis)
+        db.session.commit()
         return RespEntity.success('success')
