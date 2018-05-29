@@ -1,7 +1,7 @@
 # encoding:utf-8
 from app import db
 
-class AbstractionHistory(db.Model):
+class Abstraction(db.Model):
     __tablename__ = 'abstraction_history_table'
     uuid = db.Column(db.String(36), primary_key=True)
     item_number = db.Column(db.Integer, comment='条目序号', primary_key=True)
@@ -19,6 +19,9 @@ class AbstractionHistory(db.Model):
     tag = db.Column(db.String(256), comment='标签')
     class_by_user = db.Column(db.String(256), comment='用户标注的面向人群类型')
 
+    detail_over = db.Column(db.Boolean,default=False, comment='是否已经完成网页解析')
+    save_to_history_over = db.Column(db.Boolean,default=False, comment='是否已经归档')
+    whole_content_check_over = db.Column(db.Boolean,default=False, comment='是否整个内容可用')
 
     def toJsonString(self,hasAll = False):
         baseData = {
@@ -33,7 +36,10 @@ class AbstractionHistory(db.Model):
             'picture':self.picture,
             'category':self.category,
             'tag':self.tag,
-            'classByUser': self.class_by_user
+            'classByUser': self.class_by_user,
+            'detailOver':self.detail_over,
+            'saveToHistoryOver':self.save_to_history_over,
+            'wholeContentCheckOver':self.whole_content_check_over
         }
         if hasAll:
             baseData['content'] = self.content
