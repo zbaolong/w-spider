@@ -11,7 +11,7 @@ class RespEntity():
         }
 
     @staticmethod
-    def success(data):
+    def success(data = None):
         return {
             'data': data,
             'message': '',

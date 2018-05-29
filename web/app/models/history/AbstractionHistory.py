@@ -2,6 +2,8 @@
 from app import db
 
 class AbstractionHistory(db.Model):
+
+
     __tablename__ = 'abstraction_history_table'
     uuid = db.Column(db.String(36), primary_key=True)
     item_number = db.Column(db.Integer, comment='条目序号', primary_key=True)
@@ -34,6 +36,7 @@ class AbstractionHistory(db.Model):
             'category':self.category,
             'tag':self.tag,
             'classByUser': self.class_by_user
+
         }
         if hasAll:
             baseData['content'] = self.content
