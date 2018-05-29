@@ -69,7 +69,17 @@ class ParseCsvController(Resource):
         collection.save_to_history_over = True # 已归档
         db.session.delete(collection)
         db.session.add(collection)
-        # db.session.commit()
+
+        collection_history = CollectionTaskHistory(
+            uuid = collection.uuid,
+            keywords = collection.keywords,
+            type = collection.type,
+            source = collection.source,
+            name = collection.name,
+            batch_time = collection.batch_time
+        )
+        db.session.add(collection_history)
+        db.session.commit()
         return RespEntity().success(collection.toJsonString())
 
 

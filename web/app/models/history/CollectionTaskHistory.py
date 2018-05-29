@@ -11,8 +11,6 @@ class CollectionTaskHistory(db.Model):
     name = db.Column(db.String(20), comment='采集人')
     batch_time = db.Column(db.DateTime, comment='上传时间', default=datetime.now)
 
-    file = db.relationship('File', backref='collection', lazy='dynamic')
-
     def toJsonString(self,hasFile = False):
         baseData = {
             'uuid':self.uuid,
