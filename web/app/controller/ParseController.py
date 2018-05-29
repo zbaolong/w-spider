@@ -23,7 +23,12 @@ class ParseCsvController(Resource):
 
     def post(self):
         json = parser.parse_args()
+        abs = Abstraction.query.filter(Abstraction.uuid == json.get('uuid')).first()
+        print abs
+        if abs:
+            return InstanceExistsError()
         collection = CollectionTask.query.filter(CollectionTask.uuid == json.get('uuid')).first()
+        print collection
         reader = ParseCsv(collection.file[0].addr).called()
         index = 0
         for item in list(reader):
@@ -62,6 +67,7 @@ class ParseCsvController(Resource):
 
         collection.abstraction_over = True  # 已经处理转换为5W1H
         collection.save_to_history_over = True # 已归档
+        db.session.delete(collection)
         db.session.add(collection)
         db.session.commit()
         return RespEntity().success(collection.toJsonString())
