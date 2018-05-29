@@ -11,6 +11,7 @@ import re
 from bs4 import BeautifulSoup
 from flask_restful import Resource, reqparse
 from sqlalchemy import and_
+from app.models.history.CollectionTaskHistory import CollectionTaskHistory
 
 parser = reqparse.RequestParser()
 parser.add_argument('uuid', help='Primary key cannot be empty',location='json',type=str,required = True)
@@ -24,6 +25,7 @@ class ParseCsvController(Resource):
     def post(self):
         json = parser.parse_args()
         collection = CollectionTask.query.filter(CollectionTask.uuid == json.get('uuid')).first()
+        print(collection)
         reader = ParseCsv(collection.file[0].addr).called()
         index = 0
         for item in list(reader):
@@ -59,11 +61,10 @@ class ParseCsvController(Resource):
                     )
                     db.session.add(abs)
             index += 1
-
         collection.abstraction_over = True  # 已经处理转换为5W1H
         collection.save_to_history_over = True # 已归档
         db.session.add(collection)
-        db.session.commit()
+        # db.session.commit()
         return RespEntity().success(collection.toJsonString())
 
 
@@ -101,7 +102,7 @@ class ParseSourceController(Resource):
                 paragraph_type = u'文字'
             detail = Detail(
                 uuid=abs.uuid,
-                item_number=abs.item_number,
+                item_number=index+1,
                 type=article_type,
                 paragraph_number=index+1,
                 paragraph_type=paragraph_type,
@@ -112,7 +113,8 @@ class ParseSourceController(Resource):
         db.session.delete(abs)
 
         analysis = Analysis(
-            uuid = abs.uuid
+            uuid = abs.uuid,
+            item_number= abs.item_number
         )
         db.session.add(analysis)
         db.session.commit()
