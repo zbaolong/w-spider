@@ -6,12 +6,13 @@ from app.models.Abstraction import Abstraction
 from app.models.CollectionTask import CollectionTask
 from app.models.Detail import Detail
 from app.models.Analysis import Analysis
+from app.models.history.CollectionTaskHistory import CollectionTaskHistory
+from app.models.history.AbstractionHistory import AbstractionHistory
 from datetime import datetime
 import re
 from bs4 import BeautifulSoup
 from flask_restful import Resource, reqparse
 from sqlalchemy import and_
-from app.models.history.CollectionTaskHistory import CollectionTaskHistory
 
 parser = reqparse.RequestParser()
 parser.add_argument('uuid', help='Primary key cannot be empty',location='json',type=str,required = True)
@@ -25,7 +26,6 @@ class ParseCsvController(Resource):
     def post(self):
         json = parser.parse_args()
         abs = Abstraction.query.filter(Abstraction.uuid == json.get('uuid')).first()
-        print abs
         if abs:
             return InstanceExistsError()
         collection = CollectionTask.query.filter(CollectionTask.uuid == json.get('uuid')).first()
@@ -68,7 +68,17 @@ class ParseCsvController(Resource):
         collection.save_to_history_over = True # 已归档
         db.session.delete(collection)
         db.session.add(collection)
-        # db.session.commit()
+        # 将解析后的采集信息添加到历史数据库表当中
+        collection_history = CollectionTaskHistory(
+            uuid = collection.uuid,
+            keywords = collection.keywords,
+            type = collection.type,
+            source = collection.source,
+            name = collection.name,
+            batch_time = collection.batch_time
+        )
+        db.session.add(collection_history)
+        db.session.commit()
         return RespEntity().success(collection.toJsonString())
 
 
@@ -114,12 +124,32 @@ class ParseSourceController(Resource):
             )
             index += 1
             db.session.add(detail)
-        db.session.delete(abs)
-
+        # 生成一条分析的数据
         analysis = Analysis(
             uuid = abs.uuid,
             item_number= abs.item_number
         )
+        abs.detail_over = True
+        abs.save_to_history_over = True
+        abs.whole_content_check_over = True
+        # 将解析后的元数据添加到历史数据库表当中
+        abs_history = AbstractionHistory(
+            uuid = abs.uuid,
+            item_number = abs.item_number,
+            why = abs.why,
+            what = abs.what,
+            who = abs.who,
+            when = abs.when,
+            where = abs.where,
+            how = abs.how,
+            whole = abs.whole,
+            content = abs.content,
+            picture = abs.picture,
+            category = abs.category,
+            tag = abs.tag,
+            class_by_user = abs.class_by_user
+        )
+        db.session.add(abs_history)
         db.session.add(analysis)
         db.session.commit()
         return RespEntity.success('success')
