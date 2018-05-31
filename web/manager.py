@@ -18,8 +18,16 @@ manager.add_command("shell", Shell(make_context=make_shell_context))
 manager.add_command('database',database)
 
 @database.command
+def create():
+    mysqldb = MySQLdb.connect("localhost", app.config.get('DATEBASE_USERNAME'), app.config.get('DATEBASE_PASSWORD'),
+                              charset='utf8')
+    cursor = mysqldb.cursor()
+    cursor.execute("CREATE DATABASE IF NOT EXISTS wspider DEFAULT CHARSET utf8 COLLATE utf8_general_ci;")
+
+@database.command
 def reload():
-    mysqldb = MySQLdb.connect("localhost", "root", "123456",charset='utf8')
+    mysqldb = MySQLdb.connect("localhost", app.config.get('DATEBASE_USERNAME'), app.config.get('DATEBASE_PASSWORD'),
+                              charset='utf8')
     cursor = mysqldb.cursor()
     cursor.execute("DROP DATABASE IF EXISTS wspider")
     cursor.execute("CREATE DATABASE IF NOT EXISTS wspider DEFAULT CHARSET utf8 COLLATE utf8_general_ci;")
