@@ -10,18 +10,20 @@ class ResultController(Resource):
         args = pagingParser.parse_args()
         class_args = classParser.parse_args()
         if not class_args.get('class'):
-            items = Analysis.query.paginate(
+            pagination = Analysis.query.paginate(
                 args.get('offset'), per_page=args.get('count'),
                 error_out=False
-            ).items
+            )
         else:
-            items = Analysis.query.filter(Analysis.class_result == class_args.get('class')).paginate(
+            pagination = Analysis.query.filter(Analysis.class_result == class_args.get('class')).paginate(
                 args.get('offset'), per_page=args.get('count'),
                 error_out=False
-            ).items
-        return RespEntity.success(
-            [item.toJsonString() for item in items]
-        )
+            )
+        data = {
+            'results':[item.toJsonString() for item in pagination.items],
+            'pages':pagination.pages
+        }
+        return RespEntity.success(data)
 
 class ResultDetailController(Resource):
 

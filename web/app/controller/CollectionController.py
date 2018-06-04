@@ -12,9 +12,13 @@ class CollectionController(Resource):
         :return:
         """
         args = pagingParser.parse_args()
-        result = CollectionTask.query.paginate(
+        pagination = CollectionTask.query.paginate(
             args.get('offset'), per_page=args.get('count'),
             error_out=False
-        ).items
-        collections = [item.toJsonString(hasFile=False) for item in result]
-        return RespEntity.success(collections)
+        )
+        collections = [item.toJsonString(hasFile=False) for item in pagination.items]
+        data = {
+            'collections':collections,
+            'pages':pagination.pages
+        }
+        return RespEntity.success(data)

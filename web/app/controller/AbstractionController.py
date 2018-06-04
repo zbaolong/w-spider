@@ -20,8 +20,11 @@ class AbstractionController(Resource):
             page=args.get('offset'), per_page=args.get('count'),
             error_out=False
         )
-        items = pagination.items
-        return RespEntity.success([item.toJsonString() for item in items])
+        data = {
+            'abstractions':[item.toJsonString() for item in pagination.items],
+            'pages':pagination.pages
+        }
+        return RespEntity.success(data)
 
     def put(self):
         """

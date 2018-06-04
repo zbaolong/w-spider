@@ -96,6 +96,8 @@ class ParseSourceController(Resource):
         )).first()
         if not abs:
             return InstanceNotFoundError()
+        if Detail.query.filter(and_(Detail.uuid == abs.uuid, Detail.item_number == abs.item_number)).first():
+            return InstanceExistsError()
         body = re.findall('<p>(.*?)</p>',abs.whole) # 匹配所有p标签
         article_type = u'文字'
         if 'http' in abs.whole:  # 判断文章类型
@@ -116,7 +118,7 @@ class ParseSourceController(Resource):
                 paragraph_type = u'文字'
             detail = Detail(
                 uuid=abs.uuid,
-                item_number=index+1,
+                item_number=abs.item_number,
                 type=article_type,
                 paragraph_number=index+1,
                 paragraph_type=paragraph_type,
